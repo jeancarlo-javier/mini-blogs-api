@@ -1,0 +1,6 @@
+.vercel
+.env
+.env.development
+.env.production
+env
+__pycache__
