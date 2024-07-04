@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Session, get_db
@@ -13,18 +13,29 @@ models.Base.metadata.create_all(engine)
 app = FastAPI()
 security = HTTPBasic()
 
-# Configuración de CORS
+origins = [
+    "https://mini-blogs-wine.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://mini-blogs-wine.vercel.app"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
-@app.options("/{path:path}")
-def preflight_request(path: str):
-    return {"status": "ok"}
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(f"Request headers: {request.headers}")
+    response = await call_next(request)
+    print(f"Response headers: {response.headers}")
+    return response
+
+# @app.options("/{path:path}")
+# def preflight_request(path: str):
+#     return {"status": "ok"}
 
 @app.post("/create-user")
 def create_user(user: schemas.UserCreate):
@@ -61,3 +72,7 @@ def get_posts_by_user(credentials: Annotated[HTTPBasicCredentials, Depends(secur
     with Session() as session:
         posts = posts_crud.get_app_post_by_user(session, credentials)
         return posts
+
+@app.post("/test")
+def test(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+    return {"status": "ok"}

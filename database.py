@@ -15,7 +15,7 @@ if ENV == "production":
 else:
     db_url = "sqlite:///./local_database.db"
 
-engine = create_engine(db_url, connect_args={"check_same_thread": False}, echo=True)
+engine = create_engine(db_url, connect_args={"check_same_thread": False})
 
 Session = sessionmaker(bind=engine, autoflush=False)
 
