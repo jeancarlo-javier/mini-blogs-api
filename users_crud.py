@@ -21,14 +21,6 @@ def create_user(db: Session, user: schemas.UserCreate) -> schemas.UserCreate:
 
     return { "id": new_user.id, "name": new_user.name, "email": new_user.email }
 
-def get_user_by_id(db: Session, user_id: int):
-    user = db.query(User).filter(User.id == user_id).first()
-
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-    return user
-
 def get_users(db: Session) -> list:
     result = db.query(User).all()
 

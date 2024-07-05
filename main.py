@@ -55,12 +55,6 @@ def get_user_me(credentials: Annotated[HTTPBasicCredentials, Depends(security)])
         user = verify_user_credentials(session, email=credentials.username, password=credentials.password)
         return user
 
-@app.get("/users/{user_id}")
-def get_user_by_id(user_id: int, credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
-    with Session() as session:
-        user = users_crud.get_user_by_id(session, user_id, credentials)
-        return user
-
 @app.post("/create-post")
 def create_post(post: schemas.PostCreate, credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
     with Session() as session:
@@ -72,7 +66,3 @@ def get_posts_by_user(credentials: Annotated[HTTPBasicCredentials, Depends(secur
     with Session() as session:
         posts = posts_crud.get_app_post_by_user(session, credentials)
         return posts
-
-@app.post("/test")
-def test(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
-    return {"status": "ok"}
